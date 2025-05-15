@@ -77,6 +77,7 @@ uint8_t strobe_state(Event event, uint16_t arg) {
                 if (d < 8) d = 8;
                 else if (d > 254) d = 254;
                 cfg.strobe_delays[st] = d;
+                nice_delay_ms(100);
             }
         }
         #endif
@@ -118,7 +119,9 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         else if (st == party_strobe_e) {
         #endif
             if ((arg & 1) == 0) {
-                if (cfg.strobe_delays[st] < 255) cfg.strobe_delays[st] ++;
+                if (cfg.strobe_delays[st] < 255) 
+                    cfg.strobe_delays[st] ++;
+                nice_delay_ms(100);
             }
         }
         #endif
