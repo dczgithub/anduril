@@ -71,7 +71,7 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         #else
         else if (st == party_strobe_e) {
         #endif
-            if ((arg & 0x0F) == 0) {//0x0F降低16倍，0x1F降低32倍
+            if ((arg & 0x1F) == 0) {//0x0F调速降低16倍，0x1F调速降低32倍
                 uint8_t d = cfg.strobe_delays[st];
                 d -= ramp_direction;
                 if (d < 8) d = 8;
@@ -117,7 +117,7 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         #else
         else if (st == party_strobe_e) {
         #endif
-            if ((arg & 0x0F) == 0) {//0x0F降低16倍，0x1F降低32倍
+            if ((arg & 0x1F) == 0) {//0x0F调速降低16倍，0x1F调速降低32倍
                 if (cfg.strobe_delays[st] < 255) cfg.strobe_delays[st] ++;
             }
         }
