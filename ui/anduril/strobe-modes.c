@@ -71,19 +71,13 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         #else
         else if (st == party_strobe_e) {
         #endif
-if ((arg & 1) == 0) {
-uint8_t d = cfg.strobe_delays[st];
-// 新增频率控制逻辑
-static int adjust_interval = 0;  // 静态计数器（仅本条件块内有效）
-if (adjust_interval++ >= 6) {    // N=2，每3次触发调整1次（速度降低为1/3）
-adjust_interval = 0;         // 重置计数器
-// 原调整逻辑
- d -= ramp_direction;
-if (d < 8) d = 8;
-else if (d > 254) d = 254;
-cfg.strobe_delays[st] = d;
-}
-}
+            if ((arg & 0x07) == 0) {
+                uint8_t d = cfg.strobe_delays[st];
+                d -= ramp_direction;
+                if (d < 8) d = 8;
+                else if (d > 254) d = 254;
+                cfg.strobe_delays[st] = d;
+            }
         }
         #endif
 
@@ -123,17 +117,9 @@ cfg.strobe_delays[st] = d;
         #else
         else if (st == party_strobe_e) {
         #endif
-if ((arg & 1) == 0) {
-static int adjust_counter = 0;  // 静态变量需移至函数/全局作用域
-// 每N次触发才执行一次增加（示例N=1，速度降低50%）
-if (adjust_counter++ >= 6) {    // N=1时，每2次触发执行1次
-adjust_counter = 0;         // 重置计数器
-// 原增加逻辑（带保护上限）
-if (cfg.strobe_delays[st] < 255) {
-cfg.strobe_delays[st]++;
-}
-}
-}
+            if ((arg & 0x07) == 0) {
+                if (cfg.strobe_delays[st] < 255) cfg.strobe_delays[st] ++;
+            }
         }
         #endif
 
@@ -343,4 +329,3 @@ inline void bike_flasher_iter() {
 #ifdef USE_BORING_STROBE_STATE
 #include "anduril/ff-strobe-modes.c"
 #endif
-
