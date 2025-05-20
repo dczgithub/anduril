@@ -65,3 +65,5 @@
 //#undef USE_VOLTAGE_CORRECTION
 #undef USE_2C_STYLE_CONFIG
 
+// without the 3rd channel, extra features can fit
+#undef USE_TACTICAL_MODE

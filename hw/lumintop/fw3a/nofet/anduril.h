@@ -48,5 +48,5 @@
 #define THERM_FASTER_LEVEL 130
 
 // without the 3rd channel, extra features can fit
-#define USE_TACTICAL_MODE
+#undef USE_TACTICAL_MODE
 
