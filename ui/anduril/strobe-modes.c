@@ -13,6 +13,10 @@ uint8_t strobe_state(Event event, uint16_t arg) {
     // 'st' reduces ROM size slightly
     strobe_mode_te st = current_strobe_type;
 
+    #ifdef USE_SIMPLE_UI
+    uint8_t simple_active = cfg.simple_ui_active;
+    #endif  // ifdef USE_SIMPLE_UI
+
     #if defined(USE_MOMENTARY_MODE) || defined(USE_TACTICAL_MODE)
     momentary_mode = 1;  // 0 = ramping, 1 = strobes
     #endif
@@ -42,9 +46,7 @@ uint8_t strobe_state(Event event, uint16_t arg) {
     // 5 clicks: rotate through strobe/flasher modes
     else if (event == EV_5clicks) {
         #ifdef USE_SIMPLE_UI
-        if (cfg.simple_ui_active) {
-            return EVENT_HANDLED;
-        }
+        if (simple_active) return EVENT_HANDLED;
         #endif  // ifdef USE_SIMPLE_UI
         current_strobe_type = cfg.strobe_type = (st + 1) % NUM_STROBES;
         save_config();
@@ -55,9 +57,7 @@ uint8_t strobe_state(Event event, uint16_t arg) {
     else if (event == EV_6clicks) {
         // TODO: maybe skip aux modes?
         #ifdef USE_SIMPLE_UI
-        if (cfg.simple_ui_active) {
-            return EVENT_HANDLED;
-        }
+        if (simple_active) return EVENT_HANDLED;
         #endif  // ifdef USE_SIMPLE_UI
         set_channel_mode((channel_mode + 1) % NUM_CHANNEL_MODES);
         cfg.strobe_channels[st] = channel_mode;
@@ -68,9 +68,7 @@ uint8_t strobe_state(Event event, uint16_t arg) {
     // 7 clicks: rotate backward through strobe/flasher modes
     else if (event == EV_7clicks) {
         #ifdef USE_SIMPLE_UI
-        if (cfg.simple_ui_active) {
-            return EVENT_HANDLED;
-        }
+        if (simple_active) return EVENT_HANDLED;
         #endif  // ifdef USE_SIMPLE_UI
         current_strobe_type = cfg.strobe_type = (st - 1 + NUM_STROBES) % NUM_STROBES;
         save_config();
@@ -80,9 +78,7 @@ uint8_t strobe_state(Event event, uint16_t arg) {
     // 9 clicks: go to momentary mode (momentary strobe)
     else if (event == EV_9clicks) {
         #ifdef USE_SIMPLE_UI
-        if (cfg.simple_ui_active) {
-            return EVENT_HANDLED;
-        }
+        if (simple_active) return EVENT_HANDLED;
         #endif  // ifdef USE_SIMPLE_UI
         set_state(momentary_state, 0);
         set_level(0);
