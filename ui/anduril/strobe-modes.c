@@ -38,12 +38,7 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         return EVENT_HANDLED;
     }
   
-    ////////// Every action below here is blocked in the Extended Simple UI //////////
-    #ifdef USE_SIMPLE_UI
-    if (cfg.simple_ui_active) {
-        return EVENT_HANDLED;
-    }
-    #endif  // ifdef USE_SIMPLE_UI
+
 
     // 5 clicks: rotate through strobe/flasher modes
     else if (event == EV_5clicks) {
@@ -76,7 +71,12 @@ uint8_t strobe_state(Event event, uint16_t arg) {
     }
     #endif
     
-    if (0) {}  // placeholder
+    ////////// Every action below here is blocked in the Extended Simple UI //////////
+    #ifdef USE_SIMPLE_UI
+    if (cfg.simple_ui_active) {
+        return EVENT_HANDLED;
+    }
+    #endif  // ifdef USE_SIMPLE_UI
     // hold: change speed (go faster)
     //       or change brightness (brighter)
     else if (event == EV_click1_hold) {
