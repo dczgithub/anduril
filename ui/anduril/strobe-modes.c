@@ -37,15 +37,15 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         set_state(off_state, 0);
         return EVENT_HANDLED;
     }
-    // 2 clicks: rotate through strobe/flasher modes
-    else if (event == EV_2clicks) {
+    // 5 clicks: rotate through strobe/flasher modes
+    else if (event == EV_5clicks) {
         current_strobe_type = cfg.strobe_type = (st + 1) % NUM_STROBES;
         save_config();
         return EVENT_HANDLED;
     }
     #if (NUM_CHANNEL_MODES > 1) && defined(USE_CHANNEL_PER_STROBE)
-    // 3 clicks: rotate through channel modes for the current strobe
-    else if (event == EV_3clicks) {
+    // 6 clicks: rotate through channel modes for the current strobe
+    else if (event == EV_6clicks) {
         // TODO: maybe skip aux modes?
         set_channel_mode((channel_mode + 1) % NUM_CHANNEL_MODES);
         cfg.strobe_channels[st] = channel_mode;
@@ -53,12 +53,21 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         return EVENT_HANDLED;
     }
     #endif
-    // 4 clicks: rotate backward through strobe/flasher modes
-    else if (event == EV_4clicks) {
+    // 7 clicks: rotate backward through strobe/flasher modes
+    else if (event == EV_7clicks) {
         current_strobe_type = cfg.strobe_type = (st - 1 + NUM_STROBES) % NUM_STROBES;
         save_config();
         return EVENT_HANDLED;
     }
+    #ifdef USE_MOMENTARY_MODE
+    // 9 clicks: go to momentary mode (momentary strobe)
+    else if (event == EV_9clicks) {
+        set_state(momentary_state, 0);
+        set_level(0);
+        return EVENT_HANDLED;
+    }
+    #endif
+
     // hold: change speed (go faster)
     //       or change brightness (brighter)
     else if (event == EV_click1_hold) {
@@ -71,7 +80,7 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         #else
         else if (st == party_strobe_e) {
         #endif
-            if ((arg & 1) == 0) {
+            if ((arg & 0x0F) == 0) {
                 uint8_t d = cfg.strobe_delays[st];
                 d -= ramp_direction;
                 if (d < 8) d = 8;
@@ -117,7 +126,7 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         #else
         else if (st == party_strobe_e) {
         #endif
-            if ((arg & 1) == 0) {
+            if ((arg & 0x0F) == 0) {
                 if (cfg.strobe_delays[st] < 255) cfg.strobe_delays[st] ++;
             }
         }
@@ -142,14 +151,7 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         save_config();
         return EVENT_HANDLED;
     }
-    #ifdef USE_MOMENTARY_MODE
-    // 5 clicks: go to momentary mode (momentary strobe)
-    else if (event == EV_5clicks) {
-        set_state(momentary_state, 0);
-        set_level(0);
-        return EVENT_HANDLED;
-    }
-    #endif
+
     #if defined(USE_LIGHTNING_MODE) || defined(USE_CANDLE_MODE)
     // clock tick: bump the random seed
     else if (event == EV_tick) {
