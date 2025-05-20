@@ -224,7 +224,20 @@ uint8_t off_state(Event event, uint16_t arg) {
         return EVENT_HANDLED;
     }
     #endif
-
+        
+    // click, click, long-click: strobe mode
+    #ifdef USE_STROBE_STATE
+    else if (event == EV_click3_hold) {
+        set_state(strobe_state, 0);
+        return EVENT_HANDLED;
+    }
+    #elif defined(USE_BORING_STROBE_STATE)
+    else if (event == EV_click3_hold) {
+        set_state(boring_strobe_state, 0);
+        return EVENT_HANDLED;
+    }
+    #endif
+    
     #if defined(USE_FACTORY_RESET) && defined(USE_SOFT_FACTORY_RESET)
     // 13 clicks and hold the last click: invoke factory reset (reboot)
     else if (event == EV_click13_hold) {
@@ -254,27 +267,7 @@ uint8_t off_state(Event event, uint16_t arg) {
         }
         return EVENT_HANDLED;
     }
-//是否打开USE_EXTENDED_SIMPLE_UI，或者简单的PARTY模式
-    #ifdef USE_SIMPLE_UI
-    #if defined(USE_EXTENDED_SIMPLE_UI) || defined(USE_PARTYSIMPLE_UI)
-    if (cfg.simple_ui_active) {
-        return EVENT_NOT_HANDLED;
-    }
-    #endif  // ifdef USE_EXTENDED_SIMPLE_UI
 
-    // click, click, long-click: strobe mode
-    #ifdef USE_STROBE_STATE
-    else if (event == EV_click3_hold) {
-        set_state(strobe_state, 0);
-        return EVENT_HANDLED;
-    }
-    #elif defined(USE_BORING_STROBE_STATE)
-    else if (event == EV_click3_hold) {
-        set_state(boring_strobe_state, 0);
-        return EVENT_HANDLED;
-    }
-    #endif
-    #endif
  
     ////////// Every action below here is blocked in the (non-Extended) Simple UI //////////
 
