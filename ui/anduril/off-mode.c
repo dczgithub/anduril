@@ -254,7 +254,7 @@ uint8_t off_state(Event event, uint16_t arg) {
         }
         return EVENT_HANDLED;
     }
-
+//是否打开USE_EXTENDED_SIMPLE_UI，或者简单的PARTY模式
     #ifdef USE_SIMPLE_UI
     #if defined(USE_EXTENDED_SIMPLE_UI) || defined(USE_PARTYSIMPLE_UI)
     if (cfg.simple_ui_active) {
