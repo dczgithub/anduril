@@ -150,7 +150,7 @@ uint8_t strobe_state(Event event, uint16_t arg) {
 
     ////////// Every action below here is blocked in the Extended Simple UI //////////
     #ifdef USE_SIMPLE_UI
-    if (cfg.simple_ui_active) {
+    if (0) {
         return EVENT_HANDLED;
     }
     #endif  // ifdef USE_SIMPLE_UI
@@ -196,7 +196,7 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         return EVENT_HANDLED;
     }
     #endif
-    
+
     return EVENT_NOT_HANDLED;
 }
 
