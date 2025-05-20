@@ -43,7 +43,8 @@
 
 // Include a simplified UI for non-enthusiasts?
 #define USE_SIMPLE_UI
-
+//是否在简单模式启用PARTY模式
+#define USE_PARTYSIMPLE_UI
 
 ///// Ramp mode options /////
 
