@@ -118,11 +118,6 @@ uint8_t strobe_state(Event event, uint16_t arg) {
 
         return EVENT_HANDLED;
     }
-    // release hold: save new strobe settings
-    else if (event == EV_click2_hold_release) {
-        save_config();
-        return EVENT_HANDLED;
-    }
 
     // click, click, hold: change speed (go slower)
     else if (event == EV_click3_hold) {
@@ -146,7 +141,7 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         return EVENT_HANDLED;
     }
     // release hold: save new strobe settings
-    else if (event == EV_click3_hold_release) {
+    else if (event == EV_click2_hold_release||EV_click3_hold_release) {
         save_config();
         return EVENT_HANDLED;
     }
