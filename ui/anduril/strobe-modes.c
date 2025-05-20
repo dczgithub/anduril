@@ -14,7 +14,8 @@ uint8_t strobe_state(Event event, uint16_t arg) {
     if (0) {}  // placeholder
     #ifdef USE_PARTYSIMPLE_UI
     else if (cfg.simple_ui_active) {
-        strobe_mode_te st = party_strobe_e;
+        //strobe_mode_te st = party_strobe_e;
+        strobe_mode_te st = current_strobe_type;
     }
     #endif
     else{
