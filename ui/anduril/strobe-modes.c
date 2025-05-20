@@ -11,7 +11,7 @@ uint8_t strobe_state(Event event, uint16_t arg) {
     static int8_t ramp_direction = 1;
 
     // 'st' reduces ROM size slightly
-        strobe_mode_te st = current_strobe_type;
+    strobe_mode_te st = current_strobe_type;
 
     #if defined(USE_MOMENTARY_MODE) || defined(USE_TACTICAL_MODE)
     momentary_mode = 1;  // 0 = ramping, 1 = strobes
@@ -59,7 +59,6 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         save_config();
         return EVENT_HANDLED;
     }
-
     #ifdef USE_MOMENTARY_MODE
     // 9 clicks: go to momentary mode (momentary strobe)
     else if (event == EV_9clicks) {
@@ -68,6 +67,7 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         return EVENT_HANDLED;
     }
     #endif
+
     // hold: change speed (go faster)
     //       or change brightness (brighter)
     else if (event == EV_click1_hold) {
@@ -80,7 +80,7 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         #else
         else if (st == party_strobe_e) {
         #endif
-            if ((arg & 0x0F) == 0) {//0x0F调速降低16倍，0x1F调速降低32倍
+             if ((arg & 0x0F) == 0) {//0x0F调速降低16倍，0x1F调速降低32倍
                 uint8_t d = cfg.strobe_delays[st];
                 d -= ramp_direction;
                 if (d < 8) d = 8;
@@ -148,32 +148,6 @@ uint8_t strobe_state(Event event, uint16_t arg) {
     }
     // release hold: save new strobe settings
     else if (event == EV_click2_hold_release) {
-        save_config();
-        return EVENT_HANDLED;
-    }
-
-    // click,click, hold: change speed (go slower)
-    else if (event == EV_click3_hold) {
-        ramp_direction = 1;
-
-        if (0) {}  // placeholder
-
-        // party / tactical strobe slower
-        #if defined(USE_PARTY_STROBE_MODE) || defined(USE_TACTICAL_STROBE_MODE)
-        #ifdef USE_TACTICAL_STROBE_MODE
-        else if (st <= tactical_strobe_e) {
-        #else
-        else if (st == party_strobe_e) {
-        #endif
-            if ((arg & 0x1F) == 0) {//0x0F调速降低16倍，0x1F调速降低32倍
-                if (cfg.strobe_delays[st] < 255) cfg.strobe_delays[st] ++;
-            }
-        }
-        #endif
-        return EVENT_HANDLED;
-    }
-    // release hold: save new strobe settings
-    else if (event == EV_click3_hold_release) {
         save_config();
         return EVENT_HANDLED;
     }
@@ -357,3 +331,4 @@ inline void bike_flasher_iter() {
 #ifdef USE_BORING_STROBE_STATE
 #include "anduril/ff-strobe-modes.c"
 #endif
+
