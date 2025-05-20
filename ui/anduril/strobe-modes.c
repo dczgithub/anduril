@@ -9,7 +9,9 @@
 #ifdef USE_STROBE_STATE
 uint8_t strobe_state(Event event, uint16_t arg) {
     static int8_t ramp_direction = 1;
-
+    #ifdef USE_SIMPLE_UI
+    uint8_t simple_active = cfg.simple_ui_active;
+    #endif  // ifdef USE_SIMPLE_UI
     // 'st' reduces ROM size slightly
     strobe_mode_te st = current_strobe_type;
 
@@ -137,7 +139,11 @@ uint8_t strobe_state(Event event, uint16_t arg) {
 
         return EVENT_HANDLED;
     }
-
+    // release hold: save new strobe settings
+    else if (event == EV_click2_hold_release) {
+        save_config();
+        return EVENT_HANDLED;
+    }
     // click, click, hold: change speed (go slower)
     else if (event == EV_click3_hold) {
         ramp_direction = 1;
