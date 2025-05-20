@@ -146,16 +146,7 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         return EVENT_HANDLED;
     }
 
-    #if defined(USE_LIGHTNING_MODE) || defined(USE_CANDLE_MODE)
-    // clock tick: bump the random seed
-    else if (event == EV_tick) {
-        // un-reverse after 1 second
-        if (arg == AUTO_REVERSE_TIME) ramp_direction = 1;
 
-        pseudo_rand_seed += arg;
-        return EVENT_HANDLED;
-    }
-    #endif
 
     ////////// Every action below here is blocked in the Extended Simple UI //////////
     #ifdef USE_SIMPLE_UI
@@ -194,7 +185,18 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         return EVENT_HANDLED;
     }
     #endif
+    #if defined(USE_LIGHTNING_MODE) || defined(USE_CANDLE_MODE)
 
+    // clock tick: bump the random seed
+    else if (event == EV_tick) {
+        // un-reverse after 1 second
+        if (arg == AUTO_REVERSE_TIME) ramp_direction = 1;
+
+        pseudo_rand_seed += arg;
+        return EVENT_HANDLED;
+    }
+    #endif
+    
     return EVENT_NOT_HANDLED;
 }
 
