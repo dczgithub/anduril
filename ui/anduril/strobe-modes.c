@@ -11,7 +11,11 @@ uint8_t strobe_state(Event event, uint16_t arg) {
     static int8_t ramp_direction = 1;
 
     // 'st' reduces ROM size slightly
-    strobe_mode_te st = current_strobe_type;
+    if (0) {}  // placeholder
+    #ifdef USE_PARTYSIMPLE_UI
+    else if (cfg.simple_ui_active) {strobe_mode_te st = party_strobe_e;}
+    #endif
+    else{strobe_mode_te st = current_strobe_type;}
 
     #if defined(USE_MOMENTARY_MODE) || defined(USE_TACTICAL_MODE)
     momentary_mode = 1;  // 0 = ramping, 1 = strobes
@@ -37,6 +41,11 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         set_state(off_state, 0);
         return EVENT_HANDLED;
     }
+#ifdef USE_PARTYSIMPLE_UI
+    if (cfg.simple_ui_active) {
+        return EVENT_HANDLED;
+    }
+#endif
     // 5 clicks: rotate through strobe/flasher modes
     else if (event == EV_5clicks) {
         current_strobe_type = cfg.strobe_type = (st + 1) % NUM_STROBES;
@@ -59,6 +68,17 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         save_config();
         return EVENT_HANDLED;
     }
+
+    #ifdef USE_MOMENTARY_MODE
+    // 9 clicks: go to momentary mode (momentary strobe)
+    else if (event == EV_9clicks) {
+        set_state(momentary_state, 0);
+        set_level(0);
+        return EVENT_HANDLED;
+    }
+    #endif
+    if (0) {}  // placeholder
+    // init anything which needs to be initialized
     // hold: change speed (go faster)
     //       or change brightness (brighter)
     else if (event == EV_click1_hold) {
@@ -171,14 +191,7 @@ uint8_t strobe_state(Event event, uint16_t arg) {
 
 
         
-    #ifdef USE_MOMENTARY_MODE
-    // 9 clicks: go to momentary mode (momentary strobe)
-    else if (event == EV_9clicks) {
-        set_state(momentary_state, 0);
-        set_level(0);
-        return EVENT_HANDLED;
-    }
-    #endif
+
     #if defined(USE_LIGHTNING_MODE) || defined(USE_CANDLE_MODE)
     // clock tick: bump the random seed
     else if (event == EV_tick) {
