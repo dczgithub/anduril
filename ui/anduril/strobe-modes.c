@@ -178,17 +178,6 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         save_config();
         return EVENT_HANDLED;
     }
-    #ifdef USE_MOMENTARY_MODE
-    // 9 clicks: go to momentary mode (momentary strobe)
-    else if (event == EV_9clicks) {
-        #ifdef USE_SIMPLE_UI
-        if (simple_active) return EVENT_HANDLED;
-        #endif  // ifdef USE_SIMPLE_UI
-        set_state(momentary_state, 0);
-        set_level(0);
-        return EVENT_HANDLED;
-    }
-    #endif
     #if defined(USE_LIGHTNING_MODE) || defined(USE_CANDLE_MODE)
     // clock tick: bump the random seed
     else if (event == EV_tick) {
