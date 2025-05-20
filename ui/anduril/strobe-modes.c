@@ -13,10 +13,6 @@ uint8_t strobe_state(Event event, uint16_t arg) {
     // 'st' reduces ROM size slightly
     strobe_mode_te st = current_strobe_type;
 
-    #ifdef USE_SIMPLE_UI
-    //uint8_t simple_active = cfg.simple_ui_active;
-    #endif  // ifdef USE_SIMPLE_UI
-
     #if defined(USE_MOMENTARY_MODE) || defined(USE_TACTICAL_MODE)
     momentary_mode = 1;  // 0 = ramping, 1 = strobes
     #endif
@@ -41,50 +37,28 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         set_state(off_state, 0);
         return EVENT_HANDLED;
     }
-  
-
-    // 5 clicks: rotate through strobe/flasher modes
-    else if (event == EV_5clicks) {
-        #ifdef USE_SIMPLE_UI
-        //if (simple_active) return EVENT_HANDLED;
-        #endif  // ifdef USE_SIMPLE_UI
+    // 2 clicks: rotate through strobe/flasher modes
+    else if (event == EV_2clicks) {
         current_strobe_type = cfg.strobe_type = (st + 1) % NUM_STROBES;
         save_config();
         return EVENT_HANDLED;
     }
     #if (NUM_CHANNEL_MODES > 1) && defined(USE_CHANNEL_PER_STROBE)
-    // 6 clicks: rotate through channel modes for the current strobe
-    else if (event == EV_6clicks) {
+    // 3 clicks: rotate through channel modes for the current strobe
+    else if (event == EV_3clicks) {
         // TODO: maybe skip aux modes?
-        #ifdef USE_SIMPLE_UI
-        //if (simple_active) return EVENT_HANDLED;
-        #endif  // ifdef USE_SIMPLE_UI
         set_channel_mode((channel_mode + 1) % NUM_CHANNEL_MODES);
         cfg.strobe_channels[st] = channel_mode;
         save_config();
         return EVENT_HANDLED;
     }
     #endif
-    // 7 clicks: rotate backward through strobe/flasher modes
-    else if (event == EV_7clicks) {
-        #ifdef USE_SIMPLE_UI
-        //if (simple_active) return EVENT_HANDLED;
-        #endif  // ifdef USE_SIMPLE_UI
+    // 4 clicks: rotate backward through strobe/flasher modes
+    else if (event == EV_4clicks) {
         current_strobe_type = cfg.strobe_type = (st - 1 + NUM_STROBES) % NUM_STROBES;
         save_config();
         return EVENT_HANDLED;
     }
-    #ifdef USE_MOMENTARY_MODE
-    // 9 clicks: go to momentary mode (momentary strobe)
-    else if (event == EV_9clicks) {
-        #ifdef USE_SIMPLE_UI
-        //if (simple_active) return EVENT_HANDLED;
-        #endif  // ifdef USE_SIMPLE_UI
-        set_state(momentary_state, 0);
-        set_level(0);
-        return EVENT_HANDLED;
-    }
-    #endif
     // hold: change speed (go faster)
     //       or change brightness (brighter)
     else if (event == EV_click1_hold) {
@@ -97,7 +71,7 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         #else
         else if (st == party_strobe_e) {
         #endif
-            if ((arg & 0x0F) == 0) {//0x07减速4倍，0x0F减速8倍，0x1F减速16倍
+            if ((arg & 1) == 0) {
                 uint8_t d = cfg.strobe_delays[st];
                 d -= ramp_direction;
                 if (d < 8) d = 8;
@@ -143,7 +117,7 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         #else
         else if (st == party_strobe_e) {
         #endif
-            if ((arg & 0x0F) == 0) {//0x07减速4倍，0x0F减速8倍，0x1F减速16倍
+            if ((arg & 1) == 0) {
                 if (cfg.strobe_delays[st] < 255) cfg.strobe_delays[st] ++;
             }
         }
@@ -163,37 +137,20 @@ uint8_t strobe_state(Event event, uint16_t arg) {
 
         return EVENT_HANDLED;
     }
-
-    // click, click, hold: change speed (go slower)
-    else if (event == EV_click3_hold) {
-        ramp_direction = 1;
-
-        if (0) {}  // placeholder
-
-        // party / tactical strobe slower
-        #if defined(USE_PARTY_STROBE_MODE) || defined(USE_TACTICAL_STROBE_MODE)
-        #ifdef USE_TACTICAL_STROBE_MODE
-        else if (st <= tactical_strobe_e) {
-        #else
-        else if (st == party_strobe_e) {
-        #endif
-            if ((arg & 0x2F) == 0) {//0x07减速4倍，0x0F减速8倍，0x1F减速16倍
-                if (cfg.strobe_delays[st] < 255) cfg.strobe_delays[st] ++;
-            }
-        }
-        #endif
-
-        return EVENT_HANDLED;
-    }
     // release hold: save new strobe settings
-    else if (event == EV_click2_hold_release||EV_click3_hold_release) {
+    else if (event == EV_click2_hold_release) {
         save_config();
         return EVENT_HANDLED;
     }
-
-
+    #ifdef USE_MOMENTARY_MODE
+    // 5 clicks: go to momentary mode (momentary strobe)
+    else if (event == EV_5clicks) {
+        set_state(momentary_state, 0);
+        set_level(0);
+        return EVENT_HANDLED;
+    }
+    #endif
     #if defined(USE_LIGHTNING_MODE) || defined(USE_CANDLE_MODE)
-
     // clock tick: bump the random seed
     else if (event == EV_tick) {
         // un-reverse after 1 second
@@ -203,7 +160,6 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         return EVENT_HANDLED;
     }
     #endif
-
     return EVENT_NOT_HANDLED;
 }
 
