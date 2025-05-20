@@ -13,9 +13,13 @@ uint8_t strobe_state(Event event, uint16_t arg) {
     // 'st' reduces ROM size slightly
     if (0) {}  // placeholder
     #ifdef USE_PARTYSIMPLE_UI
-    else if (cfg.simple_ui_active) {strobe_mode_te st = party_strobe_e;}
+    else if (cfg.simple_ui_active) {
+        strobe_mode_te st = party_strobe_e;
+    }
     #endif
-    else{strobe_mode_te st = current_strobe_type;}
+    else{
+        strobe_mode_te st = current_strobe_type;
+    }
 
     #if defined(USE_MOMENTARY_MODE) || defined(USE_TACTICAL_MODE)
     momentary_mode = 1;  // 0 = ramping, 1 = strobes
