@@ -37,11 +37,6 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         set_state(off_state, 0);
         return EVENT_HANDLED;
     }
-#ifdef USE_PARTYSIMPLE_UI
-    if (cfg.simple_ui_active) {
-        return EVENT_HANDLED;
-    }
-#endif
     // 5 clicks: rotate through strobe/flasher modes
     else if (event == EV_5clicks) {
         current_strobe_type = cfg.strobe_type = (st + 1) % NUM_STROBES;
@@ -73,8 +68,6 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         return EVENT_HANDLED;
     }
     #endif
-    if (0) {}  // placeholder
-    // init anything which needs to be initialized
     // hold: change speed (go faster)
     //       or change brightness (brighter)
     else if (event == EV_click1_hold) {
@@ -184,9 +177,6 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         save_config();
         return EVENT_HANDLED;
     }
-
-
-        
 
     #if defined(USE_LIGHTNING_MODE) || defined(USE_CANDLE_MODE)
     // clock tick: bump the random seed
