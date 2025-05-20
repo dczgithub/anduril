@@ -124,25 +124,6 @@ uint8_t strobe_state(Event event, uint16_t arg) {
         return EVENT_HANDLED;
     }
 
-    #ifdef USE_PARTY_STROBE_MODE
-    // click,click, hold: change speed (go slower)
-    else if (event == EV_click3_hold) {
-        ramp_direction = 1;
-        // party strobe slower
-        
-        if (st == party_strobe_e) {
-            if ((arg & 0x2F) == 0) {
-                if (cfg.strobe_delays[st] < 255) cfg.strobe_delays[st] ++;
-            }
-        }
-        return EVENT_HANDLED;
-    }
-    // release hold: save new strobe settings
-    else if (event == EV_click3_hold_release) {
-        save_config();
-        return EVENT_HANDLED;
-    }
-    #endif
 
     #if defined(USE_LIGHTNING_MODE) || defined(USE_CANDLE_MODE)
     // clock tick: bump the random seed
